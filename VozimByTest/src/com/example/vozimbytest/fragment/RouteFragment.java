@@ -25,10 +25,11 @@ import android.widget.TabHost;
 import android.widget.Toast;
 
 import com.example.vozimbytest.R;
+import com.example.vozimbytest.Utils;
 import com.example.vozimbytest.activity.MainActivity;
 import com.example.vozimbytest.data.AdressData;
 import com.example.vozimbytest.task.AdressSearchTask;
-import com.example.vozimbytest.task.TaskResultListener;
+import com.example.vozimbytest.task.AdressSearchTask.AddressSearchListener;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -185,7 +186,7 @@ public class RouteFragment extends Fragment {
 		@Override
 		public void onTextChanged(CharSequence s, int start, int before, int count) {
 			if (count > 1) return;
-			new AdressSearchTask(new TaskResultListener() {
+			new AdressSearchTask(new AddressSearchListener() {
 				
 				@Override
 				public void onSuccess(final ArrayList<AdressData> result) {
@@ -200,6 +201,7 @@ public class RouteFragment extends Fragment {
 						@Override
 						public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 							showLocation(result.get(position).getLatLng(), from);
+							Utils.hideKeyboard(getActivity().getCurrentFocus());
 						}
 					});
 				}

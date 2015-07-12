@@ -6,4 +6,5 @@
 	<string name="to">Куда</string>
 	<string name="compute_path">Рассчитать маршрут</string>
 	<string name="no_locations">Не заполнены точки "откуда" или "куда"!</string>
+	<string name="address">Адрес</string>
 </resources>

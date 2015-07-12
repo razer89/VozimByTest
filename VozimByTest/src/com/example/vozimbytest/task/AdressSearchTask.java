@@ -16,9 +16,15 @@ public class AdressSearchTask extends AsyncTask<String, Void, ArrayList<AdressDa
 	private static final String JSON_PREFIX = "http://maps.googleapis.com/maps/api/geocode/json?address=";
 	private static final String JSON_END = "&sensor=false&language=ru&components=country:BY";
 
-	private TaskResultListener listener;
+	private AddressSearchListener listener;
 
-	public AdressSearchTask(TaskResultListener listener) {
+	public interface AddressSearchListener {
+
+		public void onSuccess(ArrayList<AdressData> result);
+		public void onError();
+	}
+	
+	public AdressSearchTask(AddressSearchListener listener) {
 		this.listener = listener;
 	}
 

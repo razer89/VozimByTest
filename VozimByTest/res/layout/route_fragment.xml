@@ -36,7 +36,8 @@
                         android:id="@+id/search_text_from"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="0" >
+                        android:layout_weight="0"
+                        android:hint="@string/address" >
 
                         <requestFocus />
                     </AutoCompleteTextView>
@@ -59,7 +60,8 @@
                         android:id="@+id/search_text_to"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="0" >
+                        android:layout_weight="0"
+                        android:hint="@string/address" >
 
                         <requestFocus />
                     </AutoCompleteTextView>
