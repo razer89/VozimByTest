@@ -23,16 +23,61 @@
             <FrameLayout
                 android:id="@android:id/tabcontent"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" >
+                android:layout_height="match_parent"
+                android:layout_weight="1" >
 
-                <include
+                <LinearLayout
                     android:id="@+id/tab1"
-                    layout="@layout/route_tab" />
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical" >
 
-                <include
+                    <AutoCompleteTextView
+                        android:id="@+id/search_text_from"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0" >
+
+                        <requestFocus />
+                    </AutoCompleteTextView>
+
+                    <RelativeLayout
+                        android:id="@+id/map_container_from"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1" >
+                    </RelativeLayout>
+                </LinearLayout>
+
+                <LinearLayout
                     android:id="@+id/tab2"
-                    layout="@layout/route_tab" />
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical" >
+
+                    <AutoCompleteTextView
+                        android:id="@+id/search_text_to"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0" >
+
+                        <requestFocus />
+                    </AutoCompleteTextView>
+
+                    <RelativeLayout
+                        android:id="@+id/map_container_to"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1" >
+                    </RelativeLayout>
+                </LinearLayout>
             </FrameLayout>
+
+            <Button
+                android:id="@+id/compute_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/compute_path" />
 
         </LinearLayout>
     </TabHost>
