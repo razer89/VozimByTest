@@ -48,19 +48,19 @@ public class RouteFragment extends Fragment {
         locationManager = (LocationManager)getActivity().getSystemService(Context.LOCATION_SERVICE);
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
                 1000 * 10, 10, locationListener);
-            locationManager.requestLocationUpdates(
-                LocationManager.NETWORK_PROVIDER, 1000 * 10, 10,
-                locationListener);
+        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000 * 10, 10, locationListener);
 		teView = (AutoCompleteTextView) v.findViewById(R.id.search_text);
 		teView.setThreshold(1);
 		teView.addTextChangedListener(new TextWatcher() {
 			
 			@Override
 			public void onTextChanged(CharSequence s, int start, int before, int count) {
+				if (count > 1) return;
+				android.util.Log.d("logd", "onTextChanged()");
 				new AdressSearchTask(new TaskResultListener() {
 					
 					@Override
-					public void onSuccess(ArrayList<AdressData> result) {
+					public void onSuccess(final ArrayList<AdressData> result) {
 						String[] hints = new String[result.size()];
 						for (int i = 0; i < result.size(); i++) {
 							hints[i] = result.get(i).getName();
@@ -71,7 +71,7 @@ public class RouteFragment extends Fragment {
 
 							@Override
 							public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-								
+								showLocation(result.get(position).getLatLng());
 							}
 						});
 					}
@@ -102,11 +102,18 @@ public class RouteFragment extends Fragment {
 		return v;
 	}
 	
+	private void showLocation(LatLng latLng) {
+		Location targetLocation = new Location("");
+	    targetLocation.setLatitude(latLng.latitude);
+	    targetLocation.setLongitude(latLng.longitude);
+	    showLocation(targetLocation);
+	}
+	
 	private void showLocation(Location location) {
 	    if (location == null) return;
 	    CameraPosition cameraPosition = new CameraPosition.Builder()
 	    .target(new LatLng(location.getLatitude(), location.getLongitude()))
-	    .zoom(5)
+	    .zoom(18)
 	    .build();
 	    CameraUpdate update = CameraUpdateFactory.newCameraPosition(cameraPosition);
 	    if (map == null) {
