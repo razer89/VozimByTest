@@ -48,11 +48,8 @@ public class PathFragment extends Fragment {
         locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000 * 10, 10, locationListener);
         
         if (getArguments() != null) {
-        	Location locationFrom, locationTo;
-            locationFrom = (Location) getArguments().getParcelableArray(PathFragment.class.getSimpleName())[0];
-            locationTo = (Location) getArguments().getParcelableArray(PathFragment.class.getSimpleName())[1];
-            LatLng latLngFrom = new LatLng(locationFrom.getLatitude(), locationTo.getLongitude());
-            LatLng latLngTo = new LatLng(locationTo.getLatitude(), locationTo.getLongitude());
+            final LatLng latLngFrom = (LatLng) getArguments().getParcelableArray(PathFragment.class.getSimpleName())[0];
+            final LatLng latLngTo = (LatLng) getArguments().getParcelableArray(PathFragment.class.getSimpleName())[1];
             LatLng[] params = {latLngFrom, latLngTo};
             new DrawRouteTask(new DrawRouteListener() {
 				
@@ -74,6 +71,8 @@ public class PathFragment extends Fragment {
 							return;
 						}
 					}
+					map.addMarker(new MarkerOptions().position(latLngFrom));
+					map.addMarker(new MarkerOptions().position(latLngTo));
 					map.addPolyline(line);
 					int size = getResources().getDisplayMetrics().widthPixels;
 					LatLngBounds latLngBounds = latLngBuilder.build();
@@ -93,6 +92,7 @@ public class PathFragment extends Fragment {
 			map = mapFragment.getMap();
 	    }
 	    if (map != null) {
+	    	map.clear();
 	    	map.addMarker(new MarkerOptions()
 	    		.position(new LatLng(location.getLatitude(), location.getLongitude()))
 		    	.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));

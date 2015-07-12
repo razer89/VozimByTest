@@ -107,16 +107,15 @@ public class RouteFragment extends Fragment {
 			Toast.makeText(getActivity(), getString(R.string.no_locations), Toast.LENGTH_SHORT).show();
 		}
 		Bundle args = new Bundle();
-		Parcelable[] coords = {locationFrom, locationTo};
+		LatLng from = new LatLng(locationFrom.getLatitude(), locationFrom.getLongitude());
+		LatLng to = new LatLng(locationTo.getLatitude(), locationTo.getLongitude());
+		Parcelable[] coords = {from, to};
 		args.putParcelableArray(PathFragment.class.getSimpleName(), coords);
 		((MainActivity)getActivity()).openPathFragment(args);
 	}
 	
 	private void showLocation(LatLng latLng, boolean from) {
-		Location targetLocation = new Location("");
-	    targetLocation.setLatitude(latLng.latitude);
-	    targetLocation.setLongitude(latLng.longitude);
-	    showLocation(targetLocation, from);
+	    showLocation(Utils.convertLatLngToLocation(latLng), from);
 	}
 	
 	private void showLocation(Location location, boolean from) {
