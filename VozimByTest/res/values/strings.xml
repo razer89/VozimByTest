@@ -7,4 +7,7 @@
 	<string name="compute_path">Рассчитать маршрут</string>
 	<string name="no_locations">Не заполнены точки "откуда" или "куда"!</string>
 	<string name="address">Адрес</string>
+	<string name="found">FOUND</string>
+	<string name="unknown">UNKNOWN</string>
+	<string name="please_wait">Пожалуйста, подождите</string>
 </resources>

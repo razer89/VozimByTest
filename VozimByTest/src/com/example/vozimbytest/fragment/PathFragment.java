@@ -7,8 +7,10 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.example.vozimbytest.R;
 import com.example.vozimbytest.task.DrawRouteTask;
@@ -31,6 +33,8 @@ public class PathFragment extends Fragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View v = inflater.inflate(R.layout.path_fragment, null);
+		setHasOptionsMenu(true);
+		final TextView statusText = (TextView)v.findViewById(R.id.route_status);
 		
 		mapFragment = SupportMapFragment.newInstance();
         FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
@@ -45,7 +49,7 @@ public class PathFragment extends Fragment {
             new DrawRouteTask(new DrawRouteListener() {
 				
 				@Override
-				public void success(List<LatLng> result) {
+				public void success(List<LatLng> result, boolean status) {
 					PolylineOptions line = new PolylineOptions();
 					line.width(4).color(Color.BLACK);
 					LatLngBounds.Builder latLngBuilder = new LatLngBounds.Builder();
@@ -75,6 +79,7 @@ public class PathFragment extends Fragment {
 					LatLngBounds latLngBounds = latLngBuilder.build();
 					CameraUpdate track = CameraUpdateFactory.newLatLngBounds(latLngBounds, size, size, 25);
 					map.moveCamera(track);
+					statusText.setText(status ? getString(R.string.found) : getString(R.string.unknown));
 				}
 				
 				@Override
@@ -82,5 +87,14 @@ public class PathFragment extends Fragment {
 			}).execute(params);
         }
 		return v;
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		if (item.getItemId() == android.R.id.home) {
+			getActivity().onBackPressed();
+			return true;
+		}
+		return super.onOptionsItemSelected(item);
 	}
 }

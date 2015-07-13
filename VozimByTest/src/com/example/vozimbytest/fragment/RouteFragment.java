@@ -30,9 +30,12 @@ import com.example.vozimbytest.activity.MainActivity;
 import com.example.vozimbytest.data.AdressData;
 import com.example.vozimbytest.task.AdressSearchTask;
 import com.example.vozimbytest.task.AdressSearchTask.AddressSearchListener;
+import com.example.vozimbytest.task.LocationToAdressTask;
+import com.example.vozimbytest.task.LocationToAdressTask.LocationToAddressListener;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.GoogleMap.OnMapClickListener;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
@@ -133,11 +136,22 @@ public class RouteFragment extends Fragment {
 		    }
 		    if (mapFrom != null) {
 		    	mapFrom.getUiSettings().setRotateGesturesEnabled(false);
+		    	mapFrom.setOnMapClickListener(mapFromClickListener);
 			    mapFrom.animateCamera(update);
 			    mapFrom.clear();
 			    mapFrom.addMarker(new MarkerOptions().position(new LatLng(location.getLatitude(),
 			    		location.getLongitude())));
 		    	locationFrom = location;
+				new LocationToAdressTask(new LocationToAddressListener() {
+					
+					@Override
+					public void success(String result) {
+						teViewFrom.setText(result);
+					}
+					
+					@Override
+					public void error() {}
+				}).execute(new LatLng(location.getLatitude(), location.getLongitude()));
 		    }
 	    } else {
 	    	if (mapTo == null) {
@@ -145,14 +159,41 @@ public class RouteFragment extends Fragment {
 		    }
 		    if (mapTo != null) {
 		    	mapTo.getUiSettings().setRotateGesturesEnabled(false);
+		    	mapTo.setOnMapClickListener(mapToClickListener);
 		    	mapTo.animateCamera(update);
 		    	mapTo.clear();
 		    	mapTo.addMarker(new MarkerOptions().position(new LatLng(location.getLatitude(),
 			    		location.getLongitude())));
 		    	locationTo = location;
+				new LocationToAdressTask(new LocationToAddressListener() {
+					
+					@Override
+					public void success(String result) {
+						teViewTo.setText(result);
+					}
+					
+					@Override
+					public void error() {}
+				}).execute(new LatLng(location.getLatitude(), location.getLongitude()));
 		    }
 	    }
 	}
+	
+	private OnMapClickListener mapFromClickListener = new OnMapClickListener() {
+		
+		@Override
+		public void onMapClick(LatLng arg0) {
+			showLocation(arg0, true);
+		}
+	};
+	
+	private OnMapClickListener mapToClickListener = new OnMapClickListener() {
+		
+		@Override
+		public void onMapClick(LatLng arg0) {
+			showLocation(arg0, false);
+		}
+	};
 	
 	private LocationListener locationListener = new LocationListener() {
 		
@@ -162,6 +203,7 @@ public class RouteFragment extends Fragment {
 		@Override
 		public void onProviderEnabled(String provider) {
 			showLocation(locationManager.getLastKnownLocation(provider), true);
+			showLocation(locationManager.getLastKnownLocation(provider), false);
 			userLocation = locationManager.getLastKnownLocation(provider);
 		}
 		
@@ -171,6 +213,7 @@ public class RouteFragment extends Fragment {
 		@Override
 		public void onLocationChanged(Location location) {
 			showLocation(location, true);
+			showLocation(location, false);
 			userLocation = location;
 		}
 	};

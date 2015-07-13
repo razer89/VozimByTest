@@ -37,6 +37,14 @@ public class MainActivity extends AppCompatActivity {
     	fragment.setArguments(params);
     	FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
     	fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+    	fragmentTransaction.addToBackStack(fragment.getClass().getSimpleName());
     	fragmentTransaction.replace(R.id.content_frame, fragment).commit();
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    }
+    
+    @Override
+    public void onBackPressed() {
+    	getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+    	super.onBackPressed();
     }
 }

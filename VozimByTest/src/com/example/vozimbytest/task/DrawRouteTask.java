@@ -9,9 +9,10 @@ import org.jsoup.Jsoup;
 import android.os.AsyncTask;
 
 import com.example.vozimbytest.polyutil.PolyUtil;
+import com.example.vozimbytest.task.DrawRouteTask.ResponseStructure;
 import com.google.android.gms.maps.model.LatLng;
 
-public class DrawRouteTask extends AsyncTask<LatLng, Void, List<LatLng>> {
+public class DrawRouteTask extends AsyncTask<LatLng, Void, ResponseStructure> {
 
 	private static final String JSON_PREFIX = "http://maps.googleapis.com/maps/api/directions/json?origin=";
 	private static final String JSON_POSTFIX = "&sensor=false&units=metric&mode=driving";
@@ -20,7 +21,7 @@ public class DrawRouteTask extends AsyncTask<LatLng, Void, List<LatLng>> {
 	
 	public interface DrawRouteListener {
 		
-		public void success(List<LatLng> result);
+		public void success(List<LatLng> result, boolean status);
 		public void error();
 	}
 	
@@ -28,8 +29,13 @@ public class DrawRouteTask extends AsyncTask<LatLng, Void, List<LatLng>> {
 		this.listener = listener;
 	}
 	
+	protected class ResponseStructure {
+		public List<LatLng> result;
+		public boolean status;
+	}
+	
 	@Override
-	protected List<LatLng> doInBackground(LatLng... params) {
+	protected ResponseStructure doInBackground(LatLng... params) {
 		String query = JSON_PREFIX + params[0].latitude + "," + params[0].longitude
 				+ "&destination=" + params[1].latitude + "," + params[1].longitude
 				+ JSON_POSTFIX;
@@ -42,7 +48,11 @@ public class DrawRouteTask extends AsyncTask<LatLng, Void, List<LatLng>> {
 			JSONObject route = routes.getJSONObject(0);
 			JSONObject overviewPolyline = route.getJSONObject("overview_polyline");
 			String polyline = overviewPolyline.getString("points");
-			return PolyUtil.decode(polyline);
+			ResponseStructure response = new ResponseStructure();
+			response.result = PolyUtil.decode(polyline);
+			String status = parent.getString("status");
+			response.status = status.equals("OK");
+			return response;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -50,14 +60,14 @@ public class DrawRouteTask extends AsyncTask<LatLng, Void, List<LatLng>> {
 	}
 
 	@Override
-	protected void onPostExecute(List<LatLng> result) {
+	protected void onPostExecute(ResponseStructure response) {
 		if (listener != null) {
-			if (result != null) {
-				listener.success(result);
+			if (response.result != null) {
+				listener.success(response.result, response.status);
 			} else {
 				listener.error();
 			}
 		}
-		super.onPostExecute(result);
+		super.onPostExecute(response);
 	}
 }
