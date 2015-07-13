@@ -14,7 +14,7 @@ import com.google.android.gms.maps.model.LatLng;
 public class AdressSearchTask extends AsyncTask<String, Void, ArrayList<AdressData>> {
 
 	private static final String JSON_PREFIX = "http://maps.googleapis.com/maps/api/geocode/json?address=";
-	private static final String JSON_END = "&sensor=false&language=ru&components=country:BY";
+	private static final String JSON_END = " &sensor=false&language=ru&components=country:BY";
 
 	private AddressSearchListener listener;
 

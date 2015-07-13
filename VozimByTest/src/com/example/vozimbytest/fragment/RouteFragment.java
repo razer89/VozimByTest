@@ -45,7 +45,7 @@ public class RouteFragment extends Fragment {
 	private LocationManager locationManager;
 	private SupportMapFragment mapFragmentFrom, mapFragmentTo;
 	private TabHost tabHost;
-	private Location locationFrom, locationTo;
+	private Location locationFrom, locationTo, userLocation;
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -109,7 +109,8 @@ public class RouteFragment extends Fragment {
 		Bundle args = new Bundle();
 		LatLng from = new LatLng(locationFrom.getLatitude(), locationFrom.getLongitude());
 		LatLng to = new LatLng(locationTo.getLatitude(), locationTo.getLongitude());
-		Parcelable[] coords = {from, to};
+		LatLng user = new LatLng(userLocation.getLatitude(), userLocation.getLongitude());
+		Parcelable[] coords = {from, to, user};
 		args.putParcelableArray(PathFragment.class.getSimpleName(), coords);
 		((MainActivity)getActivity()).openPathFragment(args);
 	}
@@ -120,6 +121,7 @@ public class RouteFragment extends Fragment {
 	
 	private void showLocation(Location location, boolean from) {
 	    if (location == null) return;
+	    locationManager.removeUpdates(locationListener);
 	    CameraPosition cameraPosition = new CameraPosition.Builder()
 	    .target(new LatLng(location.getLatitude(), location.getLongitude()))
 	    .zoom(18)
@@ -130,6 +132,7 @@ public class RouteFragment extends Fragment {
 		    	mapFrom = mapFragmentFrom.getMap();
 		    }
 		    if (mapFrom != null) {
+		    	mapFrom.getUiSettings().setRotateGesturesEnabled(false);
 			    mapFrom.animateCamera(update);
 			    mapFrom.clear();
 			    mapFrom.addMarker(new MarkerOptions().position(new LatLng(location.getLatitude(),
@@ -141,6 +144,7 @@ public class RouteFragment extends Fragment {
 	    		mapTo = mapFragmentTo.getMap();
 		    }
 		    if (mapTo != null) {
+		    	mapTo.getUiSettings().setRotateGesturesEnabled(false);
 		    	mapTo.animateCamera(update);
 		    	mapTo.clear();
 		    	mapTo.addMarker(new MarkerOptions().position(new LatLng(location.getLatitude(),
@@ -157,7 +161,8 @@ public class RouteFragment extends Fragment {
 		
 		@Override
 		public void onProviderEnabled(String provider) {
-			showLocation(locationManager.getLastKnownLocation(provider), true);			
+			showLocation(locationManager.getLastKnownLocation(provider), true);
+			userLocation = locationManager.getLastKnownLocation(provider);
 		}
 		
 		@Override
@@ -166,6 +171,7 @@ public class RouteFragment extends Fragment {
 		@Override
 		public void onLocationChanged(Location location) {
 			showLocation(location, true);
+			userLocation = location;
 		}
 	};
 	
